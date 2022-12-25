@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import "github.com/dlwldyd/coin/blockchain"
 
 func main() {
-	fmt.Println("test");
+	blockchain := blockchain.GetInstance();
+	blockchain.AddBlock("Second Block");
+	blockchain.AddBlock("Third Block");
+
+	blockchain.ShowAllBlocks();
 }
