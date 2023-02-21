@@ -11,14 +11,14 @@ import (
 	"sync" // 동기화 처리를 위한 패키지
 )
 
-type block struct {
+type Block struct {
 	data     string;
 	hash     string;
 	prevHash string;
 }
 
 type blockchain struct {
-	blocks []*block;
+	blocks []*Block;
 }
 
 var bc *blockchain;
@@ -58,8 +58,8 @@ func getHash(data, prevHash string) string {
 /*
 블록을 생성한다.
 */
-func createBlock(data string) *block {
-	newBlock := block{data, "", bc.getPrevHash()}
+func createBlock(data string) *Block {
+	newBlock := Block{data, "", bc.getPrevHash()}
 	newBlock.hash = getHash(newBlock.data, newBlock.prevHash);
 	return &newBlock;
 }
@@ -76,10 +76,17 @@ func (bc *blockchain) AddBlock(data string) {
 블록체인에 있는 모든 블록들을 출력한다.
 */
 func (bc *blockchain) ShowAllBlocks() {
-	for _, block := range bc.blocks {
-		fmt.Printf("data : %s\n", block.data);
-		fmt.Printf("hash : %s\n", block.hash);
-		fmt.Printf("prevHash : %s\n", block.prevHash);
+	for _, Block := range bc.blocks {
+		fmt.Printf("data : %s\n", Block.data);
+		fmt.Printf("hash : %s\n", Block.hash);
+		fmt.Printf("prevHash : %s\n", Block.prevHash);
 		fmt.Println("-------");
 	}
+}
+
+/*
+블록체인이 가지고 있는 모든 블록들을 배열로 반환한다.
+*/
+func (b *blockchain) AllBlocks() []*Block {
+	return b.blocks;
 }
