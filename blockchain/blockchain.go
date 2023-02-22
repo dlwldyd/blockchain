@@ -12,9 +12,9 @@ import (
 )
 
 type Block struct {
-	data     string;
-	hash     string;
-	prevHash string;
+	Data     string;
+	Hash     string;
+	PrevHash string;
 }
 
 type blockchain struct {
@@ -45,30 +45,30 @@ func (bc *blockchain) getPrevHash() string {
 	if blockLength == 0 {
 		return ""
 	}
-	return bc.blocks[blockLength-1].hash
+	return bc.blocks[blockLength-1].Hash
 }
 
 /*
 데이터와 이전 블록의 해시 값을 합해 해시를 계산한다.
 */
-func getHash(data, prevHash string) string {
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(data + prevHash)));
+func getHash(Data, PrevHash string) string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(Data + PrevHash)));
 }
 
 /*
 블록을 생성한다.
 */
-func createBlock(data string) *Block {
-	newBlock := Block{data, "", bc.getPrevHash()}
-	newBlock.hash = getHash(newBlock.data, newBlock.prevHash);
+func createBlock(Data string) *Block {
+	newBlock := Block{Data, "", bc.getPrevHash()}
+	newBlock.Hash = getHash(newBlock.Data, newBlock.PrevHash);
 	return &newBlock;
 }
 
 /*
 블록체인에 블록을 추가한다.
 */
-func (bc *blockchain) AddBlock(data string) {
-	newBlock := createBlock(data);
+func (bc *blockchain) AddBlock(Data string) {
+	newBlock := createBlock(Data);
 	bc.blocks = append(bc.blocks, newBlock);
 }
 
@@ -77,9 +77,9 @@ func (bc *blockchain) AddBlock(data string) {
 */
 func (bc *blockchain) ShowAllBlocks() {
 	for _, Block := range bc.blocks {
-		fmt.Printf("data : %s\n", Block.data);
-		fmt.Printf("hash : %s\n", Block.hash);
-		fmt.Printf("prevHash : %s\n", Block.prevHash);
+		fmt.Printf("Data : %s\n", Block.Data);
+		fmt.Printf("Hash : %s\n", Block.Hash);
+		fmt.Printf("PrevHash : %s\n", Block.PrevHash);
 		fmt.Println("-------");
 	}
 }

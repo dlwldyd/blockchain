@@ -31,7 +31,7 @@ func main() {
 		// if err != nil {
 		// 	panic(err)
 		// }
-		tmpl := template.Must(template.ParseFiles("templates/home.html")) // 위의 주석된 코드 4줄과 같은 기능을 함
+		tmpl := template.Must(template.ParseFiles("templates/pages/home.gohtml")) // 위의 주석된 코드 4줄과 같은 기능을 함
 
 		data := homeData{"Home", blockchain.AllBlocks()};
 		tmpl.Execute(w, data);
