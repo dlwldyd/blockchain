@@ -1,12 +1,7 @@
+{{define "home"}}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/mvp.css@1.12/mvp.css"> 
-    <title>blockchain</title>
-</head>
+{{template "head"}}
 <body>
     <!--
         tmpl := template.Must(template.ParseFiles("templates/home.html"))
@@ -15,25 +10,15 @@
 
         아래의 {{.Title}}은 tmpl.Execute(w, data)의 2번째 파라이터인 data에 data.Title로 접근하는 것이다.
     -->
-    <header>
-        <h1>{{.Title}}</h1>
-    </header>
+    {{template "header"}}
     <main>
         {{range .Blocks}}
             <section>
-                <ul>
-                    <li>
-                        {{.Data}}
-                    </li>
-                    <li>
-                        {{.PrevHash}}
-                    </li>
-                    <li>
-                        {{.Hash}}
-                    </li>
-                </ul>
+                {{template "block"}}
             </section>
         {{end}}
     </main>
+    {{template "footer"}}
 </body>
 </html>
+{{end}}
