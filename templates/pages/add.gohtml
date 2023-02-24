@@ -1,12 +1,14 @@
 {{define "add"}}
 <!DOCTYPE html>
 <html lang="en">
-{{template "head"}}
+<!--템플릿에 "ADD"라는 문자열 전달-->
+{{template "head" "ADD"}}
 <body>
-    {{template "header"}}
+    {{template "header" "ADD"}}
     <main>
-        <form>
-            <input type="text" placeholder="Data for your block" required />
+        <form method="POST" action="/add">
+            <input type="text" placeholder="Data for your block" required name="blockData"/>
+            <button>Add Block</button>
         </form>
     </main>
     {{template "footer"}}
