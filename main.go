@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/dlwldyd/coin/blockchain"
+	"github.com/dlwldyd/coin/utils"
 )
 const port string = ":3000"
 
@@ -28,6 +31,10 @@ type URLDescription struct {
 	Payload string `json:"payload,omitempty"` // omitempty가 들어가면 만약 값이 비어있다면 아예 json에 값을 넣지 않는다.
 }
 
+type AddBlockBody struct {
+	Message string
+}
+
 // fmt로 출력할 때 호출한다. 자바의 Object 객체의 toString 메서드라 보면된다.
 // fmt를 통해 출력하려는 객체의 메서드로 String()이 존재하면(반환타입이 string이고 파라미터가 없어야함) 자동으로 출력한다.
 func (u URLDescription) String() string {
@@ -43,9 +50,19 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 		},
 		{
 			URL: URL("/blocks"),
+			Method: "GET",
+			Description: "See All Blocks",
+		},
+		{
+			URL: URL("/blocks"),
 			Method: "POST",
 			Description: "Add A Block",
 			Payload: "data:string",
+		},
+		{
+			URL: URL("/blocks/{id}"),
+			Method: "GET",
+			Description: "See A Block",
 		},
 	}
 	rw.Header().Add("Content-Type", "application/json")
@@ -56,9 +73,23 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(rw).Encode(data) // 위의 3줄과 같은 기능을 한다.
 }
 
+func blocks(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	switch r.Method {
+	case "GET" :
+		json.NewEncoder(rw).Encode(blockchain.GetInstance().AllBlocks())
+	case "POST" : 
+		var addBlockBody AddBlockBody
+		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+		blockchain.GetInstance().AddBlock(addBlockBody.Message)
+		rw.WriteHeader(http.StatusCreated)
+	}
+}
+
 func main() {
 	// explorer.Start()
 	http.HandleFunc("/", documentation)
+	http.HandleFunc("/blocks", blocks)
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
