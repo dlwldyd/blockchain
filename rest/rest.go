@@ -8,6 +8,7 @@ import (
 
 	"github.com/dlwldyd/coin/blockchain"
 	"github.com/dlwldyd/coin/utils"
+	"github.com/gorilla/mux"
 )
 
 var port string
@@ -87,18 +88,31 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func block(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+}
+
 func Start(aPort int) {
 	// 같은 url, 다른 포트를 사용하고 싶으면 DefaultServeMux를 사용할 수 없다.
 	// Mux는 HandleFunc 함수에서 url과 handler를 매핑시켜주는 역할을 한다.
 	// 만약 사용할 Mux를 ListenAndServe 함수에 파라미터로 넣지 않는다면 DefaultServeMux를 사용한다.
-	handler := http.NewServeMux()
+	// handler := http.NewServeMux()
+	
+	router := mux.NewRouter()
 	port = fmt.Sprintf(":%d", aPort)
+	
 	// http.HandleFunc("/", documentation)
 	// http.HandleFunc("/blocks", blocks)
-	handler.HandleFunc("/", documentation)
-	handler.HandleFunc("/blocks", blocks)
+	// handler.HandleFunc("/", documentation)
+	// handler.HandleFunc("/blocks", blocks)
+	
+	// gorilla mux는 핸들러가 어떤 http method를 다루는지 지정할 수 있다.
+	router.HandleFunc("/", documentation).Methods("GET")
+	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
+	router.HandleFunc("/blocks/{id:[0-9]+}", block).Methods("GET")
 	fmt.Printf("Listening on http://localhost%s\n", port)
 
 	// http 패키지에 있는 HandleFunc 함수가 아니라(DefaultServeMux 사용) 다른 Mux를 사용한다면 2번째 파라미터로 handler를 넣어줘야한다.
-	log.Fatal(http.ListenAndServe(port, handler))
+	log.Fatal(http.ListenAndServe(port, router))
 }
