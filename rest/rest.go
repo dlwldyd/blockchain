@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/dlwldyd/coin/blockchain"
 	"github.com/dlwldyd/coin/utils"
@@ -62,7 +63,7 @@ func documentation(rw http.ResponseWriter, r *http.Request) {
 			Payload: "data:string",
 		},
 		{
-			URL: url("/blocks/{id}"),
+			URL: url("/blocks/{height}"),
 			Method: "GET",
 			Description: "See A Block",
 		},
@@ -90,7 +91,10 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 
 func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
+	id, err := strconv.Atoi(vars["height"])
+	utils.HandleErr(err)
+	block := blockchain.GetInstance().GetBlock(id)
+	json.NewEncoder(rw).Encode(block)
 }
 
 func Start(aPort int) {
@@ -110,7 +114,7 @@ func Start(aPort int) {
 	// gorilla mux는 핸들러가 어떤 http method를 다루는지 지정할 수 있다.
 	router.HandleFunc("/", documentation).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
-	router.HandleFunc("/blocks/{id:[0-9]+}", block).Methods("GET")
+	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
 	fmt.Printf("Listening on http://localhost%s\n", port)
 
 	// http 패키지에 있는 HandleFunc 함수가 아니라(DefaultServeMux 사용) 다른 Mux를 사용한다면 2번째 파라미터로 handler를 넣어줘야한다.
