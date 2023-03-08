@@ -38,6 +38,10 @@ type addBlockBody struct {
 	Message string
 }
 
+type errorResponse struct {
+	ErrorMessage string `json:"errorMessage"`
+}
+
 // fmt로 출력할 때 호출한다. 자바의 Object 객체의 toString 메서드라 보면된다.
 // fmt를 통해 출력하려는 객체의 메서드로 String()이 존재하면(반환타입이 string이고 파라미터가 없어야함) 자동으로 출력한다.
 func (u urlDescription) String() string {
@@ -93,8 +97,13 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["height"])
 	utils.HandleErr(err)
-	block := blockchain.GetInstance().GetBlock(id)
-	json.NewEncoder(rw).Encode(block)
+	block, err := blockchain.GetInstance().GetBlock(id)
+	encoder := json.NewEncoder(rw)
+	if err == blockchain.ErrNotFound {
+		encoder.Encode(errorResponse{fmt.Sprint(err)})
+	} else {
+		encoder.Encode(block)
+	}	
 }
 
 func Start(aPort int) {

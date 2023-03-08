@@ -1,12 +1,13 @@
 /*
-블록체인을 핸들링하기 위한 패키지 이다. 
-블록체인을 가져오고 블록체인에 블록을 추가할 수 있다. 
+블록체인을 핸들링하기 위한 패키지 이다.
+블록체인을 가져오고 블록체인에 블록을 추가할 수 있다.
 블록체인은 싱글톤으로 구현되어 하나의 블록체인만 존재한다.
 */
 package blockchain
 
 import (
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"sync" // 동기화 처리를 위한 패키지
 )
@@ -92,6 +93,11 @@ func (b *blockchain) AllBlocks() []*Block {
 	return b.blocks;
 }
 
-func (b *blockchain) GetBlock(height int) *Block {
-	return b.blocks[height-1]
+var ErrNotFound = errors.New("Block not found")
+
+func (b *blockchain) GetBlock(height int) (*Block, error) {;
+	if height > len(b.blocks) {
+		return nil, ErrNotFound
+	}
+	return b.blocks[height-1], nil
 }
