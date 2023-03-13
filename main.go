@@ -21,12 +21,22 @@ func main() {
 		usage()
 	}
 
-	switch os.Args[1] {
-	case "explorer":
-		fmt.Println("Start Explorer")
-	case "rest":
-		fmt.Println("Start REST API")
-	default:
-		usage()
-	}
+	//// command 가 rest 인 cli의 flag를 정함
+	//rest := flag.NewFlagSet("rest", flag.ExitOnError)
+	//// rest.Int() 면 flag의 값이 int
+	//// parameter 0 : flag 이름, 1 : default, 2 : 에러 발생시 보여줄 메세지
+	//portFlag := rest.Int("port", 4000, "Sets the port of the server")
+	//
+	//switch os.Args[1] {
+	//case "explorer":
+	//	fmt.Println("Start Explorer")
+	//case "rest":
+	//	// cli 에서 port flag를 파싱함
+	//	// flag는 2번 인덱스 이후로 나오기 때문에 2번 인덱스 부터 파싱
+	//	rest.Parse(os.Args[2:])
+	//default:
+	//	usage()
+	//
+	//}
+	//fmt.Println(*portFlag)
 }
