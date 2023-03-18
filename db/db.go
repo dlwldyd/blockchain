@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/dlwldyd/coin/utils"
 )
@@ -31,4 +32,23 @@ func DB() *bolt.DB {
 		utils.HandleErr(err)
 	}
 	return db
+}
+
+func SaveBlock(hash string, data []byte) {
+	fmt.Printf("hash : %s, data : %b\n", hash, data)
+	err := DB().Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(blocksBucket)) // bucket을 가져온다.
+		err := bucket.Put([]byte(hash), data)     // 데이터 저장(key : hash, value : data)
+		return err
+	})
+	utils.HandleErr(err)
+}
+
+func SaveBlockchain(data []byte) {
+	err := DB().Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket([]byte(dataBucket))
+		err := bucket.Put([]byte("blockchain"), data)
+		return err
+	})
+	utils.HandleErr(err)
 }

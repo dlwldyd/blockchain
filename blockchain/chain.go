@@ -6,7 +6,6 @@
 package blockchain
 
 import (
-	"fmt"
 	"sync" // 동기화 처리를 위한 패키지
 )
 
@@ -21,7 +20,7 @@ var bc *blockchain
 var once sync.Once
 
 func (b *blockchain) AddBlock(data string) {
-	block := createBlock(data, b.NewestHash, b.Heightz)
+	block := createBlock(data, b.NewestHash, b.Height)
 	b.NewestHash = block.Hash
 	b.Height = block.Height
 }
@@ -77,14 +76,14 @@ func GetInstance() *blockchain {
 /*
 블록체인에 있는 모든 블록들을 출력한다.
 */
-func (bc *blockchain) ShowAllBlocks() {
-	for _, Block := range bc.blocks {
-		fmt.Printf("Data : %s\n", Block.Data)
-		fmt.Printf("Hash : %s\n", Block.Hash)
-		fmt.Printf("PrevHash : %s\n", Block.PrevHash)
-		fmt.Println("-------")
-	}
-}
+//func (bc *blockchain) ShowAllBlocks() {
+//	for _, Block := range bc.blocks {
+//		fmt.Printf("Data : %s\n", Block.Data)
+//		fmt.Printf("Hash : %s\n", Block.Hash)
+//		fmt.Printf("PrevHash : %s\n", Block.PrevHash)
+//		fmt.Println("-------")
+//	}
+//}
 
 /*
 블록체인이 가지고 있는 모든 블록들을 배열로 반환한다.
