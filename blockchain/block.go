@@ -1,9 +1,7 @@
 package blockchain
 
 import (
-	"bytes"
 	"crypto/sha256"
-	"encoding/gob"
 	"fmt"
 	"github.com/dlwldyd/coin/db"
 	"github.com/dlwldyd/coin/utils"
@@ -26,14 +24,6 @@ func createBlock(data string, prevHash string, height int) *Block {
 	return &block
 }
 
-func (b *Block) toBytes() []byte {
-	var blockBuffer bytes.Buffer
-	encoder := gob.NewEncoder(&blockBuffer)
-	err := encoder.Encode(b)
-	utils.HandleErr(err)
-	return blockBuffer.Bytes()
-}
-
 func (b *Block) persist() {
-	db.SaveBlock(b.Hash, b.toBytes())
+	db.SaveBlock(b.Hash, utils.ToBytes(b))
 }
