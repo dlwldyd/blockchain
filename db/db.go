@@ -12,6 +12,7 @@ const (
 	dbName       = "blockchain.db"
 	dataBucket   = "data"
 	blocksBucket = "blocks"
+	checkpoint   = "checkpoint"
 )
 
 var db *bolt.DB
@@ -37,7 +38,7 @@ func DB() *bolt.DB {
 func SaveBlock(hash string, data []byte) {
 	fmt.Printf("hash : %s, data : %b\n", hash, data)
 	err := DB().Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte(blocksBucket)) // bucket을 가져온다.
+		bucket := tx.Bucket([]byte(blocksBucket)) // bucket을 가져온다. 파라미터는 버킷 이름
 		err := bucket.Put([]byte(hash), data)     // 데이터 저장(key : hash, value : data)
 		return err
 	})
@@ -47,8 +48,19 @@ func SaveBlock(hash string, data []byte) {
 func SaveBlockchain(data []byte) {
 	err := DB().Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket([]byte(dataBucket))
-		err := bucket.Put([]byte("blockchain"), data)
+		err := bucket.Put([]byte(checkpoint), data)
 		return err
 	})
 	utils.HandleErr(err)
+}
+
+func Checkpoint() []byte {
+	var data []byte
+	err := DB().View(func(tx *bolt.Tx) error { // read only transaction
+		bucket := tx.Bucket([]byte(dataBucket))
+		data = bucket.Get([]byte(checkpoint))
+		return nil
+	})
+	utils.HandleErr(err)
+	return data
 }

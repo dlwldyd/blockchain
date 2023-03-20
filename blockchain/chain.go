@@ -6,6 +6,9 @@
 package blockchain
 
 import (
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	"github.com/dlwldyd/coin/db"
 	"github.com/dlwldyd/coin/utils"
 	"sync" // 동기화 처리를 위한 패키지
@@ -20,6 +23,13 @@ type blockchain struct {
 var bc *blockchain
 
 var once sync.Once
+
+func (b *blockchain) restore(data []byte) {
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	// 파라미터로 포인터가 들어가야함 왜냐하면 해당 메모리 값에 data를 디코딩(파싱) 하기 때문에
+	err := decoder.Decode(b)
+	utils.HandleErr(err)
+}
 
 func (b *blockchain) persist() {
 	db.SaveBlockchain(utils.ToBytes(b))
@@ -39,9 +49,16 @@ func GetInstance() *blockchain {
 	if bc == nil {
 		once.Do(func() { // 몇개의 쓰레드, goRoutine이 동작하든 해당 함수는 단 한번만 실행된다.
 			bc = &blockchain{"", 0}
-			bc.AddBlock("Genesis Block")
+			checkpoint := db.Checkpoint()
+			if checkpoint == nil {
+				bc.AddBlock("Genesis Block")
+			} else {
+				fmt.Println("....")
+				bc.restore(checkpoint)
+			}
 		})
 	}
+	fmt.Printf("%d\n", bc.Height)
 	return bc
 }
 
